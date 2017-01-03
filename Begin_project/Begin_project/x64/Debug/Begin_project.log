@@ -1,0 +1,10 @@
+﻿  Source.cpp
+e:\opencv\build\include\opencv2\core\mat.hpp(1965): warning C4819: The file contains a character that cannot be represented in the current code page (949). Save the file in Unicode format to prevent data loss
+e:\opencv\build\include\opencv2\core\persistence.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (949). Save the file in Unicode format to prevent data loss
+e:\opencv\build\include\opencv2\core\utility.hpp : warning C4819: The file contains a character that cannot be represented in the current code page (949). Save the file in Unicode format to prevent data loss
+e:\대학\영상처리\begin_project\begin_project\source.cpp(65): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+e:\대학\영상처리\begin_project\begin_project\source.cpp(66): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+e:\대학\영상처리\begin_project\begin_project\source.cpp(67): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+e:\대학\영상처리\begin_project\begin_project\source.cpp(371): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+  Begin_project.vcxproj -> E:\대학\영상처리\Begin_project\x64\Debug\Begin_project.exe
+  Begin_project.vcxproj -> E:\대학\영상처리\Begin_project\x64\Debug\Begin_project.pdb (Full PDB)
