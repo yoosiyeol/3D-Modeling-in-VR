@@ -27,8 +27,6 @@ private:
 
 	PXCSession *session;
 	PXCSenseManager *sm;			//SenseManager
-	PXCCaptureManager *cm;
-	pxcStatus status;
 	PXCBlobModule *blobModule;
 	PXCBlobData* blobData;
 	PXCBlobConfiguration* blobConfig;
@@ -36,12 +34,12 @@ private:
 	float frameRate;
 
 	//blob point
-	std::vector<PXCPointI32> points;
+	//std::vector<PXCPointI32> points;
 
-	//ºí·Ó °ü·Ã ÃÊ±âÈ­
+	//Blob Module Preset
 	void initializeBlob()
 	{
-		// Blob ¸ðµâ µ¥ÀÌÅÍ ¼ÂÆÃ
+		// Blob Module Data Setting
 		blobModule = sm->QueryBlob();
 		blobData = blobModule->CreateOutput();
 
@@ -59,20 +57,20 @@ private:
 		blobConfig->EnableStabilizer(true);
 
 
-		//ÀÌ°Ô ÃÖÀûÀÎ°Å °°À½
-		status = blobConfig->SetMaxBlobArea(0.115f);
+		//ì´ê²Œ ìµœì ì¸ê±° ê°™ìŒ
+		blobConfig->SetMaxBlobArea(0.115f);
 		//blobConfig->SetMinBlobArea(0.03f);
 		/*if (status == PXC_STATUS_NO_ERROR)
-		printf("³ë¿¡·¯");
+		printf("ë…¸ì—ëŸ¬");
 		else if (status == PXC_STATUS_PARAM_UNSUPPORTED)
-		printf("¿¹½º¿¡·¯");*/
+		printf("ì˜ˆìŠ¤ì—ëŸ¬");*/
 		blobConfig->ApplyChanges();
 
-		// À±°û Æ÷ÀÎÆ® ¹è¿­ ÃÊ±âÈ­
-		points.resize(maxBlobToShow * 4000);
+		// ìœ¤ê³½ í¬ì¸íŠ¸ ë°°ì—´ ì´ˆê¸°í™”
+		//points.resize(maxBlobToShow * 4000);
 	}
 	
-	//PXCImage(¸®¾ó¼¾½º½ºÅ¸ÀÏ) ¿¡¼­ Mat Çü½ÄÀ¸·Î Ã¼ÀÎÁö
+	//PXCImage(for realsense) Convert To Mat(opencv) 
 	cv::Mat PXCImage2CVMat(PXCImage *pxcImage, PXCImage::PixelFormat format)
 	{
 		PXCImage::ImageData data;
@@ -98,14 +96,14 @@ private:
 		return ocvImage;
 	}
 	
-	//ºí·Ó¸¸ Ã£±â
+	//Find Just Blob
 	void updateBlobImage(PXCImage* depthFrame,cv::Mat *input)
 	{
 		if (depthFrame == nullptr) {
 			return;
 		}
 
-		// Blob µ¥ÀÌÅÍ ¾÷µ¥ÀÌÆ®
+		// Blob Data Update
 		auto sts = blobData->Update();
 		if (sts < PXC_STATUS_NO_ERROR) {
 			return;
@@ -122,10 +120,10 @@ private:
 		PXCImage* blobImage = session->CreateImage(&depthInfo);
 
 
-		// Blob °³¼ö
+		// Blob Count 
 		int numOfBlobs = blobData->QueryNumberOfBlobs();
 		for (int i = 0; i < numOfBlobs; ++i) {
-			// Blob °¡±î¿î °÷¿¡¼­ ¸Õ °÷ ¼ø
+			// Blob Near To Far
 			PXCBlobData::IBlob* blob;
 			PXCBlobData::AccessOrderType accessOrder = PXCBlobData::ACCESS_ORDER_NEAR_TO_FAR;
 
@@ -136,13 +134,13 @@ private:
 				continue;
 			}
 
-			// Blob‰æ‘œ‚ðŽæ“¾‚·‚é
+			// Load Blob Segment 
 			sts = blob->QuerySegmentationImage(blobImage);
 			if (sts < PXC_STATUS_NO_ERROR) {
 				continue;
 			}
 
-			// Blob‰æ‘œ‚ð“Ç‚Ýž‚Þ
+			// Read Blob
 			PXCImage::ImageData data;
 			pxcStatus sts = blobImage->AcquireAccess(PXCImage::Access::ACCESS_READ,
 				PXCImage::PIXEL_FORMAT_Y16, &data);
@@ -151,60 +149,52 @@ private:
 			}
 
 
-			// ƒf??‚ðƒRƒs?‚·‚é
-			/*for (int j = 0; j < depthInfo.height * depthInfo.width; ++j) {
-				if (data.planes[0][j] != 0) {
-					// ƒCƒ“ƒfƒbƒNƒX‚É‚æ‚Á‚ÄAF–¡‚ð•Ï‚¦‚é
-					ContourImage.data[j] = (i + 1) * 64;
-				}
-			}*/
-
 			PXCImage2CVMat(blobImage, PXCImage::PIXEL_FORMAT_ANY).copyTo(*input);
 
-			// Blob ¾×¼¼½º ÇØÁ¦
+			// Release Access Blob 
 			blobImage->ReleaseAccess(&data);
 
-			// Blob¿Ü°û¼± ºÒ·¯¿À±â
+			// Blobì™¸ê³½ì„  ë¶ˆëŸ¬ì˜¤ê¸°
 			//updateContoursImage(blob, i,input);
 		}
 
-		// C++°æ¿ì ¸±¸®Áî ¤¤¤¤
+		// C++ê²½ìš° ë¦´ë¦¬ì¦ˆ ã„´ã„´
 		//blobImage->Release();
 	}
 	
-	//¸®¾ó¼¾½º½ºÅ¸ÀÏ ¿Ü°û¼± ¾÷µ¥ÀÌÆ®
+	//Contour Update(For realsense)
 	/*
 	void updateContoursImage(PXCBlobData::IBlob* blob, int index,cv::Mat *input)
 	{
-		// ºí·Ó Ã£±â
+		// ë¸”ë¡­ ì°¾ê¸°
 		auto numOfContours = blob->QueryNumberOfContours();
 		for (int i = 0; i < numOfContours; ++i) {
-			// ¿Ü°û¼± Ã£±â
+			// ì™¸ê³½ì„  ì°¾ê¸°
 			PXCBlobData::IContour* contour;
 			blob->QueryContour(i, contour);
 			pxcI32 size = contour->QuerySize();
 			if (size <= 0) {
 				continue;
 			}
-			// Æ÷ÀÎÆ® ¸Þ¸ð¸® ÀçÇÒ´ç
+			// í¬ì¸íŠ¸ ë©”ëª¨ë¦¬ ìž¬í• ë‹¹
 			if (points.size() < size) {
 				points.reserve(size);
 			}
 
-			// —ÖŠs‚Ì?‚ðŽæ“¾‚·‚é
+			// ì€–ë‘ºê¶»?ê·©ë¡¦ë²¦ê¶¥ê·¡
 			//auto sts = blob->QueryContourPoints(i, points.size(), &points[0]);
 			auto sts = contour->QueryPoints(points.size(), &points[0]);
 			if (sts < PXC_STATUS_NO_ERROR) {
 				continue;
 			}
 
-			// ¿Ü°û¼± ±×¸®±â
+			// ì™¸ê³½ì„  ê·¸ë¦¬ê¸°
 			drawContour(&points[0], size, index,input);
 		}
 	}
 	void drawContour(PXCPointI32* points, pxcI32 size, int index,cv::Mat *ContourImage)
 	{
-		// ¶óÀÎ ÀÐ¾îµé¿© ±×¸®±â
+		// ë¼ì¸ ì½ì–´ë“¤ì—¬ ê·¸ë¦¬ê¸°
 		for (int i = 0; i < (size - 1); ++i) {
 			const auto& pt1 = points[i];
 			const auto& pt2 = points[i + 1];
@@ -212,7 +202,7 @@ private:
 				cv::Scalar(((index + 1) * 127)), 5);
 		}
 
-		// ³¡°ú ¸¶Áö¸· ÀÌ¾îÁÖ±â
+		// ëê³¼ ë§ˆì§€ë§‰ ì´ì–´ì£¼ê¸°
 		const auto& pt1 = points[size - 1];
 		const auto& pt2 = points[0];
 		cv::line(*ContourImage, cv::Point(pt1.x, pt1.y), cv::Point(pt2.x, pt2.y),
@@ -223,7 +213,7 @@ private:
 	*/
 public:
 		
-	//Ä«¸Þ¶ó ÃÊ±âÈ­ ¹× ºí·Ó ÃÊ±â¼¼ÆÃ
+	//Init Camera n Preset Blob
 	void initialize()
 	{
 		//Init Session
@@ -243,8 +233,8 @@ public:
 		depthRange.max = 800.f;
 		status = device->SetDSMinMaxZ(depthRange); // fails with PXC_STATUS_DEVICE_FAILED(-201)
 		if (status != PXC_STATUS_NO_ERROR) {
-			//throw std::runtime_error("±íÀÌ Ä«¸Þ¶ó ÃÖ´ë ÃÖ¼Ò ¼³Á¤ ½ÇÆÐ");
-			std::cout << "±íÀÌ Ä«¸Þ¶ó ±íÀÌ¼³Á¤ ½ÇÆÐ" << std::endl;
+			//throw std::runtime_error("Set Range of Depth Camera Fail");
+			std::cout << "Error In Setting Range of Depth Camera" << std::endl;
 			return;
 		}
 
@@ -266,19 +256,19 @@ public:
 		//About Blob
 		status = sm->EnableBlob(0);
 		if (status < PXC_STATUS_NO_ERROR) {
-			//throw std::runtime_error("Blob ½ÇÆÐ");
-			std::cout << "Blob »ç¿ë ½ÇÆÐ" << std::endl;
+			//throw std::runtime_error("Blob ì‹¤íŒ¨");
+			std::cout << "Error : Blob Pipe Line" << std::endl;
 			return;
 		}
 
 		status = sm->Init();
 		if (status != PXC_STATUS_NO_ERROR) {
-			//throw std::runtime_error("¼¾½º ¸Å´ÏÀú init ½ÇÆÐ");
-			std::cout << "¼¾½º¸Å´ÏÀú ÀÎÀÕ ½ÇÆÐ" << std::endl;
+			//throw std::runtime_error("ì„¼ìŠ¤ ë§¤ë‹ˆì € init ì‹¤íŒ¨");
+			std::cout << "Error : SenseManager Init" << std::endl;
 			return;
 		}
 
-		//ÀÌ¹ÌÁö ¹ÝÀü
+		//Flip Video
 		sm->QueryCaptureManager()->QueryDevice()->SetMirrorMode(
 			PXCCapture::Device::MirrorMode::MIRROR_MODE_HORIZONTAL);
 
@@ -287,7 +277,7 @@ public:
 
 	}
 
-	//¸Å°³º¯¼ö¿¡ Color Image º¹»ç
+	//Copy Color Image To Input
 	void getColorImage(cv::Mat *Input)
 	{
 		if (sm->AcquireFrame(true) < PXC_STATUS_NO_ERROR) return;
@@ -299,7 +289,7 @@ public:
 		sm->ReleaseFrame();
 	}
 
-	//¸Å°³º¯¼ö¿¡ Blob Image º¹»ç
+	//Copy Blob Image To Input
 	void getBlobImage(cv::Mat *Input) {
 		if (sm->AcquireFrame(true) < PXC_STATUS_NO_ERROR) return;
 
@@ -311,7 +301,7 @@ public:
 	}
 
 
-	//¸Å°³º¯¼ö¿¡ Depth Image º¹»ç
+	//Copy Depth Image To Input
 	void getDepthImage(cv::Mat *Input)
 	{
 		if (sm->AcquireFrame(true) < PXC_STATUS_NO_ERROR) return;
@@ -340,34 +330,36 @@ private:
 
 	CvPoint		hand_center;
 	CvPoint		ClickPoint;
-	CvPoint		*fingers;	// Detected fingers positions 
-	CvPoint		*defectsP;	// Convexity defects depth points 
+	//CvPoint		*fingers;	// Detected fingers positions 
+	//CvPoint		*defectsP;	// Convexity defects depth points 
 
 	CvMemStorage	*hull_st;
-	CvMemStorage	*temp_st;
+	//CvMemStorage	*temp_st;
 	CvMemStorage	*defects_st;
 	CvMemStorage  *ContourSt;
 
-	IplConvKernel	*kernel;	// Kernel for morph operations 
+	//IplConvKernel	*kernel;	// Kernel for morph operations 
 
 	int		num_fingers;
 	int		hand_radius;
-	int		num_defects;
+	//int		num_defects;
 
 	
-	//Depth¿¡¼­ ¾²ÀÌ´Â Point¸¦ ³ÖÀ¸¸é Color»çÀÌÁî¿¡¼­ »ç¿ëÇÏ´Â Point ¸®ÅÏ 
+	//Depthì—ì„œ ì“°ì´ëŠ” Pointë¥¼ ë„£ìœ¼ë©´ Colorì‚¬ì´ì¦ˆì—ì„œ ì‚¬ìš©í•˜ëŠ” Point ë¦¬í„´ 
+	//Input Point of Depth, Return Converted Point of Color
 	CvPoint getColorPoint(CvPoint A)
 	{
 		CvPoint ColorPoint;
 
-		ColorPoint.x = (640 / 320)*A.x + 60;
-		ColorPoint.y = (480 / 240)*A.y - 20;
+		ColorPoint.x = (640 / 320)*A.x +60;
+		ColorPoint.y = (480 / 240)*A.y -20;
 
 
 		return ColorPoint;
 	}
 
-	//P2ÀÇ °¢µµ ¸®ÅÏ
+	//P2ì˜ ê°ë„ ë¦¬í„´
+	//Return Angle(degree) of P2
 	double __fastcall Meas_Angle(CvPoint P1, CvPoint P2, CvPoint P3)
 	{
 		double a, b, c;
@@ -385,7 +377,8 @@ private:
 		return Angle;
 	}
 
-	//µÎ Á¡ »çÀÌÀÇ °Å¸® ¸®ÅÏ
+	//ë‘ ì  ì‚¬ì´ì˜ ê±°ë¦¬ ë¦¬í„´
+	//Distance between two points
 	double getDistance(CvPoint A, CvPoint B)
 	{
 		double distance = 0;
@@ -395,6 +388,8 @@ private:
 		return distance;
 	}
 
+	//ì´ì „ ë²„ì „ í…ŒìŠ¤íŠ¸ìš©
+	//For Latest version
 	/*
 	void CheckCircle()
 	{
@@ -404,6 +399,7 @@ private:
 		}
 	}*/
 
+	
 
 public:
 
@@ -418,8 +414,8 @@ public:
 		ForSumImage = cvCreateImage(cvGetSize(IplColor), 8, 3);
 		BackImage = cvCreateImage(cvGetSize(IplColor), 8, 3);*/
 
-		fingers = (CvPoint*)calloc(NUM_FINGERS + 1, sizeof(CvPoint));
-		defectsP = (CvPoint*)calloc(NUM_DEFECTS, sizeof(CvPoint));
+		//fingers = (CvPoint*)calloc(NUM_FINGERS + 1, sizeof(CvPoint));
+		//defectsP = (CvPoint*)calloc(NUM_DEFECTS, sizeof(CvPoint));
 	}
 
 	void blob2Contour(cv::Mat BlobImage,cv::Mat *OutContourImage)
@@ -442,18 +438,18 @@ public:
 
 		//cvErode(iplContour, iplContour);
 		//cvErode(iplContour, iplContour);
-		cvDilate(iplContour, iplContour); // ÆØÃ¢
+		cvDilate(iplContour, iplContour); // íŒ½ì°½
 
 		//cv::imshow("InBlob2Conotur", cvContourImage);
 
 
-		//À±°û¼± Ã£±â
+		//ìœ¤ê³½ì„  ì°¾ê¸°
 		cvFindContours(
-			iplContour,							// ÀÔ·Â ¿µ»ó
-			ContourSt,             //°ËÃâµÈ ¿Ü°û¼±À» ±â·ÏÇÏ±â À§ÇÑ ¸Þ¸ð¸® ½ºÅä¸®Áö
-			&contourP,             //¿Ü°û¼±ÀÇ ÁÂÇ¥µéÀÌ ÀúÀåµÉ Sequence
+			iplContour,							// Input Picture
+			ContourSt,             //Storage for Save Contours
+			&contourP,             //ì™¸ê³½ì„ ì˜ ì¢Œí‘œë“¤ì´ ì €ìž¥ë  Sequence
 			sizeof(CvContour),
-			CV_RETR_TREE,           //¾î¶²Á¾·ùÀÇ ¿Ü°û¼± Ã£À»Áö, ¾î¶»°Ô º¸¿©ÁÙÁö¿¡ ´ëÇÑÁ¤º¸
+			CV_RETR_TREE,           //ì–´ë–¤ì¢…ë¥˜ì˜ ì™¸ê³½ì„  ì°¾ì„ì§€, ì–´ë–»ê²Œ ë³´ì—¬ì¤„ì§€ì— ëŒ€í•œì •ë³´
 			CV_CHAIN_APPROX_SIMPLE,
 			cvPoint(0, 0)
 		);
@@ -461,13 +457,13 @@ public:
 		// Clean IplContour
 		cvZero(iplContour);
 		if (contourP) {
-			//¿Ü°û¼±À» Ã£Àº Á¤º¸(contour)¸¦ ÀÌ¿ëÇÏ¿© ¿Ü°û¼±À» ±×¸²
+			//ì™¸ê³½ì„ ì„ ì°¾ì€ ì •ë³´(contour)ë¥¼ ì´ìš©í•˜ì—¬ ì™¸ê³½ì„ ì„ ê·¸ë¦¼
 			cvDrawContours(
-				iplContour,               //¿Ü°û¼±ÀÌ ±×·ÁÁú ¿µ»ó
-				contourP,              //¿Ü°û¼± Æ®¸®ÀÇ ·çÆ®³ëµå
-				cvScalarAll(255),      //¿ÜºÎ ¿Ü°û¼±ÀÇ »ö»ó
-				cvScalarAll(150),      //³»ºÎ ¿Ü°û¼±ÀÇ »ö»ó
-				100                    //¿Ü°û¼±À» ±×¸±¶§ ÀÌµ¿ÇÒ ±íÀÌ
+				iplContour,               //ì™¸ê³½ì„ ì´ ê·¸ë ¤ì§ˆ ì˜ìƒ
+				contourP,              //ì™¸ê³½ì„  íŠ¸ë¦¬ì˜ ë£¨íŠ¸ë…¸ë“œ
+				cvScalarAll(255),      //ì™¸ë¶€ ì™¸ê³½ì„ ì˜ ìƒ‰ìƒ
+				cvScalarAll(150),      //ë‚´ë¶€ ì™¸ê³½ì„ ì˜ ìƒ‰ìƒ
+				100                    //ì™¸ê³½ì„ ì„ ê·¸ë¦´ë•Œ ì´ë™í•  ê¹Šì´
 			);
 
 			cv::cvarrToMat(iplContour).copyTo(*OutContourImage);
@@ -487,6 +483,215 @@ public:
 
 		cvReleaseImage(&g_gray);
 		cvReleaseImage(&dst);*/
+	}
+
+	void find_convex_hull(cv::Mat *Color)
+	{
+		CvSeq *defects;
+		CvConvexityDefect *defect_array;
+		int i;
+		double x = 0, y = 0;
+		double dist = 0;
+		//double LongestDistance = 0;
+		double distance = 0;
+		double degree = 0;
+		//CvPoint pt0;
+		//CvPoint pt;
+		CvPoint ColorPoint;
+		CvPoint ColorHandCenter;
+		CvPoint ColorClickPoint=cvPoint(640,480);
+		CvPoint ForComparePoint ;
+		int FingerPosition = 0;
+
+		hull = NULL;
+
+		if (!contourP)
+			return;
+		// find the convexhull
+		hull = cvConvexHull2(contourP, hull_st, CV_CLOCKWISE, 0);
+
+		int counthull = hull->total;
+
+		//Draw Convex Hull Edge
+		/*pt0 = **CV_GET_SEQ_ELEM(CvPoint*, hull, counthull - 1);
+		for (int i = 0; i < counthull; i++) {
+		pt = **CV_GET_SEQ_ELEM(CvPoint*, hull, i);
+		//cv::line(ContourImage, pt0, pt, CV_RGB(255, 255, 255));
+		pt0 = pt;
+		}*/
+
+		//Find the convexity defects
+		defects = cvConvexityDefects(contourP, hull, defects_st);
+		int countdefects = defects->total;
+
+		defect_array = (CvConvexityDefect*)calloc(defects->total,
+			sizeof(CvConvexityDefect));
+		cvCvtSeqToArray(defects, defect_array, CV_WHOLE_SEQ);
+
+
+		//Find Hand Center & radius
+		for (i = 0; i < defects->total && i <defects->total; i++) {
+			x += defect_array[i].depth_point->x;
+			y += defect_array[i].depth_point->y;
+
+			//defectsP[i] = cvPoint(defect_array[i].depth_point->x,
+			//	defect_array[i].depth_point->y);
+		}
+
+		x /= defects->total;
+		y /= defects->total;
+
+		//num_defects = defects->total;
+		hand_center = cvPoint(x, y);
+
+		//printf("%d %d\n", hand_center.x, hand_center.y);
+
+		// Compute hand radius as mean of distances of
+		//defects' depth point to hand center 
+		for (i = 0; i < defects->total; i++) {
+			int d = (x - defect_array[i].depth_point->x) *
+				(x - defect_array[i].depth_point->x) +
+				(y - defect_array[i].depth_point->y) *
+				(y - defect_array[i].depth_point->y);
+
+			dist += sqrt(d);
+		}
+
+		hand_radius = dist / defects->total;
+
+
+
+		// Count Fingers		
+		for (int i = 0; i < countdefects; i++)
+		{
+			degree = Meas_Angle(*defect_array[i].start, *defect_array[i].depth_point, *defect_array[i].end);
+
+			if (degree < 100)
+			{
+				//	if (defect_array[i].depth > 5) {
+				if (i < countdefects)
+					distance = getDistance(*defect_array[i].start, *defect_array[i].end);
+				if (distance > 5) {
+
+					ColorHandCenter = getColorPoint(hand_center);
+					ColorPoint = getColorPoint(*defect_array[i].end);
+					cv::circle(*Color, ColorPoint, 15, CV_RGB(255, 0, 0), 0, 8);
+					cv::line(*Color, ColorPoint, ColorHandCenter, CV_RGB(0, 255, 0));
+					//Catch Click Point On Longest Finger 
+					/*if (getDistance(*defect_array[i].end, hand_center) > LongestDistance) {
+						ColorClickPoint = getColorPoint(*defect_array[i].end);
+						LongestDistance = getDistance(*defect_array[i].end, hand_center);
+					}*/
+					//Catch Click Point On Leftmost Finger
+					ForComparePoint = getColorPoint(*defect_array[i].end);
+					if(ColorClickPoint.x>ForComparePoint.x)
+						ColorClickPoint = ForComparePoint;
+					
+					
+					
+					FingerPosition++;
+					//if (i == countdefects)
+					//cv::circle(cvContourImage, *defect_array[i].end, 15, CV_RGB(255, 255, 255), 0, 8);
+					//cv::line(ContourImage, *defect_array[i].start, *defect_array[i].end, CV_RGB(255, 255, 255));
+					//	}
+				}
+			}
+			/////////////////////////////////////////
+		}
+
+
+		num_fingers = FingerPosition;
+		cv::circle(*Color, ColorClickPoint, 10, CV_RGB(0, 0, 255), 0, 8);
+		ClickPoint = ColorClickPoint;
+		//printf("Number of Finger: %d\n", num_fingers);
+		free(defect_array);
+		//CheckCircle();
+
+		/*
+		if (num_fingers)
+		printf("ì†ê°€ë½ í¬ì§€ì…˜:íˆì–´\n");
+		else
+		printf("ì†ê°€ë½ í¬ì§€ì…˜:ê·¸ëž©\n");
+		*/
+		/*
+		int j = 0;
+		for (; defects; defects = defects->h_next)
+		{
+		int nomdef = defects->total; // defect amount
+		//outlet_float( m_nomdef, nomdef );
+
+		//printf(" defect no %d \n",nomdef);
+
+		if (nomdef == 0)
+		continue;
+
+		// Alloc memory for defect set.
+		//fprintf(stderr,"malloc\n");
+		defect_array = (CvConvexityDefect*)malloc(sizeof(CvConvexityDefect)*nomdef);
+
+		// Get defect set.
+		//fprintf(stderr,"cvCvtSeqToArray\n");
+		cvCvtSeqToArray(defects, defect_array, CV_WHOLE_SEQ);
+
+		// Draw marks for all defects.
+		for (int i = 0; i<nomdef; i++)
+		{
+		printf(" defect depth for defect %d %f \n", i, defect_array[i].depth);
+		cv::line(ContourImage, *(defect_array[i].start), *(defect_array[i].depth_point), CV_RGB(255, 255, 0), 1, CV_AA, 0);
+		cv::circle(ContourImage, *(defect_array[i].depth_point), 5, CV_RGB(0, 0, 164), 2, 8, 0);
+		cv::circle(ContourImage, *(defect_array[i].start), 5, CV_RGB(0, 0, 164), 2, 8, 0);
+		cv::line(ContourImage, *(defect_array[i].depth_point), *(defect_array[i].end), CV_RGB(255, 255, 0), 1, CV_AA, 0);
+
+		}
+
+		j++;
+
+		}
+		*/
+		/*
+		if (hull) {
+
+		// Get convexity defects of contour w.r.t. the convex hull
+		defects = cvConvexityDefects(contourP, hull, defects_st);
+
+		if (defects && defects->total) {
+		defect_array = (CvConvexityDefect*)calloc(defects->total,
+		sizeof(CvConvexityDefect));
+		cvCvtSeqToArray(defects, defect_array, CV_WHOLE_SEQ);
+
+		// Average depth points to get hand center
+
+		for (i = 0; i < defects->total && i < NUM_DEFECTS; i++) {
+		x += defect_array[i].depth_point->x;
+		y += defect_array[i].depth_point->y;
+		defectsP[i] = cvPoint(defect_array[i].depth_point->x,
+		defect_array[i].depth_point->y);
+		}
+
+		x /= defects->total;
+		y /= defects->total;
+
+		num_defects = defects->total;
+		hand_center = cvPoint(x, y);
+
+		printf("%d %d\n", hand_center.x, hand_center.y);
+
+		// Compute hand radius as mean of distances of
+		//defects' depth point to hand center
+		for (i = 0; i < defects->total; i++) {
+		int d = (x - defect_array[i].depth_point->x) *
+		(x - defect_array[i].depth_point->x) +
+		(y - defect_array[i].depth_point->y) *
+		(y - defect_array[i].depth_point->y);
+
+		dist += sqrt(d);
+		}
+
+		hand_radius = dist / defects->total;
+		free(defect_array);
+		}
+		}
+		*/
 	}
 
 };
@@ -511,13 +716,15 @@ int main()
 		Camera.getBlobImage(&Blob);
 
 		cv::imshow("Blob", Blob);
-		cv::imshow("Color", Color);
-		cv::imshow("Depth", Depth);
+		//cv::imshow("Color", Color);
+		//cv::imshow("Depth", Depth);
 		//---------------------------------------------//
 
 		//--------------test Hand part ---------------//
 		Hand.blob2Contour(Blob, &Contour);
 		cv::imshow("Contour", Contour);
+		Hand.find_convex_hull(&Color);
+		cv::imshow("Drawed Color", Color);
 		//---------------------------------------------//
 
 		int key = cv::waitKey(1);
