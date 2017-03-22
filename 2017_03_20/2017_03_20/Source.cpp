@@ -223,6 +223,7 @@ public:
 		desc1.subgroup = PXCSession::IMPL_SUBGROUP_VIDEO_CAPTURE;
 		PXCCapture* c;
 		session->CreateImpl<PXCCapture>(&desc1, &c);
+		auto status = 0;
 
 		//PXCCaptureManager Init
 		PXCCapture::Device* device = c->CreateDevice(0);
@@ -324,6 +325,8 @@ public:
 class mHand
 {
 private:
+	
+	cv::Mat BackGroundImage = cv::Mat::zeros(ColorSize, CV_8UC3);
 
 	CvSeq		*contourP;	// Hand contour 
 	CvSeq		*hull;		// Hand convex hull 
@@ -334,15 +337,11 @@ private:
 	//CvPoint		*defectsP;	// Convexity defects depth points 
 
 	CvMemStorage	*hull_st;
-	//CvMemStorage	*temp_st;
 	CvMemStorage	*defects_st;
 	CvMemStorage  *ContourSt;
 
-	//IplConvKernel	*kernel;	// Kernel for morph operations 
-
 	int		num_fingers;
 	int		hand_radius;
-	//int		num_defects;
 
 	
 	//Depth에서 쓰이는 Point를 넣으면 Color사이즈에서 사용하는 Point 리턴 
@@ -418,7 +417,7 @@ public:
 		//defectsP = (CvPoint*)calloc(NUM_DEFECTS, sizeof(CvPoint));
 	}
 
-	void blob2Contour(cv::Mat BlobImage,cv::Mat *OutContourImage)
+	void blob2Contour(const cv::Mat BlobImage,cv::Mat *OutContourImage)
 	{
 
 		cv::Mat TempBlobImage;
@@ -485,6 +484,7 @@ public:
 		cvReleaseImage(&dst);*/
 	}
 
+	
 	void find_convex_hull(cv::Mat *Color)
 	{
 		CvSeq *defects;
@@ -694,6 +694,32 @@ public:
 		*/
 	}
 
+	//Input에 Color 이미지 SumIamge에는 Color와 그려진 것이 합친 이미지가 나갈 것
+	void CheckFingerNum(const cv::Mat Input,cv::Mat *OutSumImage)
+	{
+		cv::String mystr;
+		if (num_fingers == 4) {
+			mystr = "5 fingers";
+			BackGroundImage=cv::Mat::zeros(ColorSize, CV_8UC3);
+		}
+		else if (num_fingers == 3)
+			mystr = "4 fingers";
+		else if (num_fingers == 2)
+			mystr = "3 fingers";
+		else if (num_fingers == 1)
+			mystr = "2 fingers";
+		else if (num_fingers == 0)
+			mystr = "Doesn't exist";
+
+		cv::putText(Input, mystr, CvPoint(20, 20), 2, 1.2, cvScalarAll(255));
+
+		if (num_fingers == 2) {
+			cv::circle(Input, ClickPoint, 10, CV_RGB(255, 255, 255), 0, 8);
+			cv::circle(BackGroundImage, ClickPoint, 5, CV_RGB(255, 255, 255), 10);
+		}
+		cv::add(Input, BackGroundImage, *OutSumImage);
+	}
+
 };
 
 int main()
@@ -701,6 +727,7 @@ int main()
 	mCamera Camera;
 	mHand Hand;
 	cv::Mat Color;
+	cv::Mat DrawedColor;
 	cv::Mat Depth;
 	cv::Mat Blob = cv::Mat::zeros(DepthSize, CV_8UC1);
 	
@@ -712,9 +739,10 @@ int main()
 	while (1) {
 		//---------------test Camera part ------------//
 		Camera.getColorImage(&Color);
+		Camera.getColorImage(&DrawedColor);
 		Camera.getDepthImage(&Depth);
 		Camera.getBlobImage(&Blob);
-
+		
 		cv::imshow("Blob", Blob);
 		//cv::imshow("Color", Color);
 		//cv::imshow("Depth", Depth);
@@ -724,7 +752,9 @@ int main()
 		Hand.blob2Contour(Blob, &Contour);
 		cv::imshow("Contour", Contour);
 		Hand.find_convex_hull(&Color);
-		cv::imshow("Drawed Color", Color);
+		cv::imshow("Drawed Convex Color", Color);
+		Hand.CheckFingerNum(Color, &DrawedColor);
+		cv::imshow("Drawed Color", DrawedColor);
 		//---------------------------------------------//
 
 		int key = cv::waitKey(1);
