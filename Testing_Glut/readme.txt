@@ -37,7 +37,6 @@ Case freeglut
 2. copy freeglut-MSVC-3.0.0-2.mp\freeglut\lib\x64\freeglut.lib -> (projetc name)\(projetc name)\library
 3. copy dir freeglut-MSVC-3.0.0-2.mp\freeglut\include  -> (projetc name)\(projetc name)\
 
-
 Visual
 
 properties -> Linker -> generate -> addtioanl lib dir -> .\library
