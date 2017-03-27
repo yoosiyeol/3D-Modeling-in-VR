@@ -2,7 +2,7 @@
 1.How to set intel realsense sdk properties
 
 Create new project with empty project visual c++
-Create cpp files with named ¡®main¡¯
+Create cpp files with named Â¡Â®mainÂ¡Â¯
 Go to Project properties
 Go to C/C++ -> Additional Include Directories, put these entry.
 $(RSSDK_DIR)/include
@@ -43,7 +43,7 @@ Visual
 properties -> Linker -> generate -> addtioanl lib dir -> .\library
 -----------------------------------------------------------------------------
 How to use
-you Open 5 fingers -> Rotate Polygon
+Open 5 fingers -> Rotate Polygon
 
 
-When you want to just move your hand location, grab your hand
+When you want to just move your hand location, grab your hand and move
