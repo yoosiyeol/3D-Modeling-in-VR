@@ -3,26 +3,19 @@ d:\opencv310\opencv\build\include\opencv2\core\mat.hpp(1965): warning C4819: 현
 d:\opencv310\opencv\build\include\opencv2\core\persistence.hpp : warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 d:\opencv310\opencv\build\include\opencv2\core\utility.hpp : warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 d:\opencv310\opencv\build\include\opencv2\core\utility.hpp : warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-d:\visual studio poject\testing_glut\testing_glut\main.cpp(69): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\visual studio poject\testing_glut\testing_glut\main.cpp(70): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\visual studio poject\testing_glut\testing_glut\main.cpp(73): warning C4244: '인수': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\visual studio poject\testing_glut\testing_glut\main.cpp(74): warning C4244: '인수': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\visual studio poject\testing_glut\testing_glut\main.cpp(75): warning C4244: '인수': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\visual studio poject\testing_glut\testing_glut\main.cpp(76): warning C4244: '인수': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\visual studio poject\testing_glut\testing_glut\main.cpp(167): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
-d:\visual studio poject\testing_glut\testing_glut\main.cpp(168): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
-d:\visual studio poject\testing_glut\testing_glut\main.cpp(177): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
-d:\visual studio poject\testing_glut\testing_glut\main.cpp(178): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
-d:\visual studio poject\testing_glut\testing_glut\main.cpp(187): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
-d:\visual studio poject\testing_glut\testing_glut\main.cpp(188): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
-  mOpenCv.cpp
-d:\opencv310\opencv\build\include\opencv2\core\mat.hpp(1965): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-d:\opencv310\opencv\build\include\opencv2\core\persistence.hpp : warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-d:\opencv310\opencv\build\include\opencv2\core\utility.hpp : warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-d:\opencv310\opencv\build\include\opencv2\core\utility.hpp : warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-d:\visual studio poject\testing_glut\testing_glut\mopencv.cpp(371): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\visual studio poject\testing_glut\testing_glut\mopencv.cpp(379): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\visual studio poject\testing_glut\testing_glut\mopencv.cpp(384): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  코드를 생성하고 있습니다...
+d:\visual studio poject\testing_glut\testing_glut\main.cpp(75): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\testing_glut\testing_glut\main.cpp(76): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\testing_glut\testing_glut\main.cpp(79): warning C4244: '인수': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\testing_glut\testing_glut\main.cpp(80): warning C4244: '인수': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\testing_glut\testing_glut\main.cpp(81): warning C4244: '인수': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\testing_glut\testing_glut\main.cpp(82): warning C4244: '인수': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\testing_glut\testing_glut\main.cpp(180): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+d:\visual studio poject\testing_glut\testing_glut\main.cpp(181): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+d:\visual studio poject\testing_glut\testing_glut\main.cpp(190): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+d:\visual studio poject\testing_glut\testing_glut\main.cpp(191): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+d:\visual studio poject\testing_glut\testing_glut\main.cpp(200): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+d:\visual studio poject\testing_glut\testing_glut\main.cpp(201): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+d:\visual studio poject\testing_glut\testing_glut\main.cpp(296): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\testing_glut\testing_glut\main.cpp(302): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   Testing_Glut.vcxproj -> D:\visual studio poject\Testing_Glut\x64\Debug\Testing_Glut.exe
   Testing_Glut.vcxproj -> D:\visual studio poject\Testing_Glut\x64\Debug\Testing_Glut.pdb (Partial PDB)

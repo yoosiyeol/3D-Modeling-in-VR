@@ -2,7 +2,7 @@
 1.How to set intel realsense sdk properties
 
 Create new project with empty project visual c++
-Create cpp files with named Â¡Â®mainÂ¡Â¯
+Create cpp files with named ¡®main¡¯
 Go to Project properties
 Go to C/C++ -> Additional Include Directories, put these entry.
 $(RSSDK_DIR)/include
@@ -37,12 +37,13 @@ Case freeglut
 2. copy freeglut-MSVC-3.0.0-2.mp\freeglut\lib\x64\freeglut.lib -> (projetc name)\(projetc name)\library
 3. copy dir freeglut-MSVC-3.0.0-2.mp\freeglut\include  -> (projetc name)\(projetc name)\
 
+
 Visual
 
 properties -> Linker -> generate -> addtioanl lib dir -> .\library
 -----------------------------------------------------------------------------
 How to use
-Open 5 fingers -> Rotate Polygon
+you Open 5 fingers -> Rotate Polygon
 
 
-When you want to just move your hand location, grab your hand and move
+When you want to just move your hand location, grab your hand

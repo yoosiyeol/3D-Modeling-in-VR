@@ -14,13 +14,20 @@
 
 #include "math.h"
 
-#define NUM_FINGERS 5
+#define NUM_FINGERS 4
 #define NUM_DEFECTS 8
 #define THRESH 250
-#define maxBlobToShow 1
+#define maxBlobToShow 2
 #define PI 3.1415926535
+
 #define DepthSize cv::Size(320,240)
 #define ColorSize cv::Size(640,480)
+
+#define MOVELOCATION cv::Point(520, 130)
+#define ROTATELOCATION cv::Point(520, 250)
+#define ZOOMLOCATION cv::Point(410, 360)
+#define MODIFYLOCATION cv::Point(300,360)
+
 
 class mCamera
 {
@@ -67,17 +74,32 @@ private:
 
 	cv::Mat BackGroundImage = cv::Mat::zeros(ColorSize, CV_8UC3);
 
-	CvSeq		*contourP;	// Hand contour 
-	CvSeq		*hull;		// Hand convex hull 
-
-	CvPoint		hand_center;
-	CvPoint		ClickPoint;
+	CvSeq		*LH_contourP;	// Hand contour 
+	CvSeq		*RH_contourP;	// Hand contour 
 	
-	CvMemStorage	*hull_st;
-	CvMemStorage	*defects_st;
-	CvMemStorage  *ContourSt;
+	CvSeq		*RHHull;		// Hand convex hull
+	CvSeq		*LHHull;		// Hand convex hull
 
-	int		num_fingers;
+	CvPoint		LHand_center;
+	CvPoint		RHand_center;
+	
+	CvPoint		LHClickPoint;
+	CvPoint		RHClickPoint;
+	
+	CvPoint LHTips[NUM_FINGERS];
+	CvPoint RHTips[NUM_FINGERS];
+
+	CvMemStorage	*RHHull_st=NULL;
+	CvMemStorage	*LHHull_st=NULL;
+	
+	CvMemStorage	*RHDefects_st;
+	CvMemStorage	*LHDefects_st;
+	
+	CvMemStorage  *LHContourSt;
+	CvMemStorage  *RHContourSt;
+
+	int		RHnum_fingers;
+	int		LHnum_fingers;
 	int		hand_radius;
 
 
@@ -85,9 +107,6 @@ private:
 	//Input Point of Depth, Return Converted Point of Color
 	CvPoint getColorPoint(CvPoint A);
 
-	//P2의 각도 리턴
-	//Return Angle(degree) of P2
-	double __fastcall Meas_Angle(CvPoint P1, CvPoint P2, CvPoint P3);
 
 	//두 점 사이의 거리 리턴
 	//Distance between two points
@@ -95,17 +114,57 @@ private:
 
 public:
 
+	//P2의 각도 리턴
+	//Return Angle(degree) of P2
+	double __fastcall Meas_Angle(CvPoint P1, CvPoint P2, CvPoint P3);
+
 	void initialize();
+
+	void optHandPoint();
+
+	void drawCircle(CvPoint *Tips,CvPoint HandCenter,cv::Mat *Color);
 
 	void blob2Contour(const cv::Mat BlobImage, cv::Mat *OutContourImage);
 
+	void run(cv::Mat *Color,cv::Mat *blob);
 
-	void find_convex_hull(cv::Mat *Color);
+	CvPoint find_convex_hull(cv::Mat *Color, CvSeq *hull, CvSeq *contourP, CvMemStorage *hull_st, CvMemStorage *defects_st,CvPoint *tips, CvPoint *hand_center,int check);
 
 	//Input에 Color 이미지 SumIamge에는 Color와 그려진 것이 합친 이미지가 나갈 것
-	void CheckFingerNum(const cv::Mat Input, cv::Mat *OutSumImage);
+	void CheckFingerNum(const cv::Mat Input, cv::Mat *OutSumImage,int num_fingers);
 
-	int getFingerNum();
+	int getRHFingerNum();
 
-	cv::Point getFingerClickPoint();
+	int getLHFingerNum();
+
+	cv::Point getLHFingerClickPoint();
+	cv::Point getRHFingerClickPoint();
+
+	cv::Point getLHandCenter();
+	cv::Point getRHandCenter();
+};
+
+class mTools
+{
+private:
+	cv::Mat imgModify=cv::imread("modify.jpg",1);
+	cv::Mat imgMove= cv::imread("move.jpg",1);
+	cv::Mat imgRotate= cv::imread("rotate.jpg",1);
+	cv::Mat imgZoom= cv::imread("zoom.jpg",1);
+
+	cv::Mat ModifyROI;
+	cv::Mat ZoomROI;
+	cv::Mat RotateROI;
+	cv::Mat MoveROI;
+
+	bool check_clicked = false;
+	int ToolsNum = 0;
+
+	void updateIcons(cv::Point clickpoint);
+
+	bool checkClicked(int numofingers, int numoftools);
+
+public:
+	void initMappingToolsOnColor(cv::Mat *Input,cv::Point clickpoint,int numfingers);
+
 };

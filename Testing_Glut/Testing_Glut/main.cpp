@@ -15,12 +15,18 @@ using namespace std;
 
 mHand Hand;
 mCamera Camera;
+mTools Tools;
+//------------------------//
+double point1[3] = { -0.5,-0.5,-0.5 };
+double point2[3] = { -0.5,0.5,-0.5 };
+double point3[3] = { 0.5, 0.5, -0.5 };
+double point4[3] = { 0.5, -0.5, -0.5 };
 
 Mat Depth;
 Mat Blob = cv::Mat::zeros(DepthSize, CV_8UC1);
 Mat Contour = cv::Mat::zeros(DepthSize, CV_8UC1);
 
-Point tempHandPoint = CvPoint(0, 0);
+Point curHandPoint = CvPoint(0, 0);
 
 int distance;
 
@@ -96,10 +102,14 @@ void drawBitmapText(char *str, float x, float y, float z)
 static void cubebase(void)
 {
 	glBegin(GL_QUADS);
-	glVertex3d(-0.5, -0.5, -0.5);
+	/*glVertex3d(-0.5, -0.5, -0.5);
 	glVertex3d(-0.5, 0.5, -0.5);
 	glVertex3d(0.5, 0.5, -0.5);
-	glVertex3d(0.5, -0.5, -0.5);
+	glVertex3d(0.5, -0.5, -0.5);*/
+	glVertex3d(point1[0], point1[1], point1[2]);
+	glVertex3d(point2[0], point2[1], point2[2]);
+	glVertex3d(point3[0], point3[1], point3[2]);
+	glVertex3d(point4[0], point4[1], point4[2]);
 	glEnd();
 }
 
@@ -148,6 +158,9 @@ void draw_cube()
 	glVertex3d(0.5, -0.5, 0.5);
 	glVertex3d(0.5, 0.5, 0.5);
 	glVertex3d(-0.5, 0.5, 0.5);
+
+
+
 	glEnd();
 
 	glPopMatrix();
@@ -239,10 +252,13 @@ void display()
 	glPushMatrix();
 	//glTranslatef(0.0, 0.0, -4.0);
 	//glRotatef(cubeAngle, 1.0, 1.0, 1.0);
-	glTranslatef(cubeX, cubeY, cubeZ);
+	//glTranslatef(cubeX, cubeY, cubeZ);
+	glTranslated(cubeX, cubeY, cubeZ);
 	glRotatef(pitch, 1.0, 0.0, 0.0); //x축에 대해 회전
 	glRotatef(yaw, 0.0, 1.0, 0.0); //y축에 대해 회전
 	glRotatef(roll, 0.0, 0.0, 1.0); //z축에 대해 회전
+
+
 
 	draw_cube(); //큐브
 	draw_line();  //좌표축
@@ -267,50 +283,101 @@ void reshape(GLsizei width, GLsizei height)
 	glMatrixMode(GL_MODELVIEW); //이후 연산은 ModelView Matirx에 영향을 준다. 
 }
 
+void funcHand(int finger_num, CvPoint Click_Point)
+{
+	double gap = 0;
+
+	if (curHandPoint.x == 0 && curHandPoint.y == 0)
+		curHandPoint = Click_Point;
+
+	//5 Fingers
+	if (finger_num == 4) {
+		gap = curHandPoint.x - Click_Point.x;
+		yaw -= gap;
+		cout << gap << endl;
+		if (yaw > 360)
+			yaw -= 360;
+		
+		gap = curHandPoint.y - Click_Point.y;
+		pitch -= gap;
+		if (pitch > 360)
+			pitch -= 360;
+	}
+	if (finger_num == 3) {
+
+		//cubeX += (curHandPoint.x - Click_Point.x) / 50;
+		//cubeY += (curHandPoint.y - Click_Point.y) / 50;
+	}
+	else if (finger_num == 2) {
+		//roll -= 10;
+		if (roll > 360)
+			roll -= 360;
+
+	}
+	else if (finger_num == 0)
+		curHandPoint = CvPoint(0, 0);
+
+	curHandPoint = Click_Point;
+
+}
 
 void timer(int value) {
 	//웹캠으로부터 이미지 캡처
-	//capture->read(img_cam);
-	//cvtColor(img_cam, img_cam, COLOR_BGR2RGB);
+//	capture->read(img_cam);
+//	cvtColor(img_cam, img_cam, COLOR_BGR2RGB);
 
-	static Point CurPoint = CvPoint(0, 0);
+	Point CurPoint = CvPoint(0, 0);
+	
+	CvPoint LH_Click_Point = Hand.getLHFingerClickPoint();
+	CvPoint RH_Click_Point = Hand.getRHFingerClickPoint();
 
-	Camera.getColorImage(&img_cam);
-	//Camera.getDepthImage(&Depth);
+	CvPoint LH_Hand_Center = Hand.getLHandCenter();
+	CvPoint RH_Hand_Center = Hand.getRHandCenter();
+
+	int LH_finger_num = Hand.getLHFingerNum();
+	int RH_finger_num = Hand.getRHFingerNum();
+
+
 	Camera.getBlobImage(&Blob);
 	Hand.blob2Contour(Blob, &Contour);
-	Hand.find_convex_hull(&img_cam);
-
+	Camera.getColorImage(&img_cam);
+	cvtColor(img_cam, img_cam, COLOR_BGR2RGB);
+	Hand.run(&img_cam,&Blob);
+	//Tools.initMappingToolsOnColor(&img_cam,Hand.getFingerClickPoint(),Hand.getFingerNum());
+	//Camera.getDepthImage(&Depth);
+	
+	//imshow("contour", Contour);
 	imshow("Blob", Blob);
+	//imshow("mapping tools", img_cam);
 	
 
+	//--------------따로 함수 뺄거임 ---------------//
+	//cout << Hand.getLHFingerNum() << endl;
+	funcHand(LH_finger_num, LH_Click_Point);
 	
-	//5 Fingers
-	if ((Hand.getFingerNum()) == 4) {
-		/*cubeAngle += 1.0f;
-		if (cubeAngle > 360) {
-			cubeAngle -= 360;
-		}*/
-		if (tempHandPoint == Point(0, 0)) {
-			tempHandPoint = Hand.getFingerClickPoint();
-		}
-		yaw -= tempHandPoint.x - Hand.getFingerClickPoint().x;
-		if (pitch > 360)
-			pitch -= 360;
-		pitch -= tempHandPoint.y - Hand.getFingerClickPoint().y;
-		if (yaw > 360)
-			yaw -= 360;
-		tempHandPoint = Hand.getFingerClickPoint();
-	}
-	else if ((Hand.getFingerNum()) == 0)
-		tempHandPoint = Point(0, 0);
-
-
+	//----------------------------------------------------//
+	
 	glutPostRedisplay();      //윈도우를 다시 그리도록 요청
-	glutTimerFunc(1, timer, 0); //다음 타이머 이벤트는 1밀리세컨트 후  호출됨.
+	glutTimerFunc(100, timer, 0); //다음 타이머 이벤트는 1밀리세컨트 후  호출됨.
 }
 
 
+double angle(CvPoint P1,CvPoint P2,CvPoint P3)
+{
+	double a, b, c;
+	double Angle, temp;
+
+	a = sqrt(pow(P1.x - P3.x, 2) + pow(P1.y - P3.y, 2));
+	b = sqrt(pow(P1.x - P2.x, 2) + pow(P1.y - P2.y, 2));
+	c = sqrt(pow(P2.x - P3.x, 2) + pow(P2.y - P3.y, 2));
+
+	temp = (pow(b, 2) + pow(c, 2) - pow(a, 2)) / (2 * b*c);
+
+	Angle = acos(temp);
+	Angle = Angle * (180 / PI);
+
+	return Angle;
+}
 
 void init()
 {
@@ -340,6 +407,7 @@ void keyboard(unsigned char key, int x, int y)
 
 int main(int argc, char** argv)
 {
+	
 	glutInit(&argc, argv);  //GLUT 초기화
 
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH); //더블 버퍼와 깊이 버퍼를 사용하도록 설정, GLUT_RGB=0x00임
@@ -354,7 +422,7 @@ int main(int argc, char** argv)
 	Camera.initialize();
 	Hand.initialize();
 
-	glutInitWindowSize(screenW, screenH);
+	glutInitWindowSize(screenW+110, screenH);
 	glutInitWindowPosition(100, 100); //윈도우의 위치 (x,y)
 	glutCreateWindow("OpenGL Example"); //윈도우 생성
 

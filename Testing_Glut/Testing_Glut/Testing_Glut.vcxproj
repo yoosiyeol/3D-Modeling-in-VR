@@ -115,8 +115,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="mOpenCv.cpp" />
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="hand.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mTools.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mOpenCv.h" />
