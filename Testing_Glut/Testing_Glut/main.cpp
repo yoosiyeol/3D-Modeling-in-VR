@@ -42,6 +42,19 @@ float cubeX = 0.0;
 float cubeY = 0.0;
 float cubeZ = -4.0;
 
+//테스팅 벌텍스
+float ver[8][3] = {
+	{-0.5f,-0.5f,-0.5f},	//뒤왼아
+	{-0.5f,0.5f,-0.5f},	//뒤왼위
+	{0.5f,0.5f,-0.5f},	//뒤오위
+	{0.5f,-0.5f,-0.5f},	//뒤오아
+	{ -0.5f,-0.5f,0.5f },	//앞왼아
+	{ -0.5f,0.5f,0.5f },	//앞왼위
+	{ 0.5f,0.5f,0.5f },	//앞오위
+	{ 0.5f,-0.5f,0.5f }	//앞오아
+};
+
+
 //회전
 float pitch = 0.0;
 float yaw = 0.0;
@@ -72,14 +85,27 @@ GLuint MatToTexture(Mat image)
 
 void draw_background()
 {
-	int x = screenW / 100.0;
-	int y = screenH / 100.0;
+	int x = screenW / 120.0;
+	int y = screenH / 120.0;
+	int w = screenW;
+	int h = screenH;
 
 	glBegin(GL_QUADS);
+	/*glTexCoord2f(0.0, 0.0); glVertex3f(0, 0,0);
+	glTexCoord2f(1.0, 0.0); glVertex3f(w, 0,0);
+	glTexCoord2f(1.0, 1.0); glVertex3f(w, h,0);
+	glTexCoord2f(0.0, 1.0); glVertex3f(0, h,0);*/
+
 	glTexCoord2f(0.0, 1.0); glVertex3f(-x, -y, 0.0);
 	glTexCoord2f(1.0, 1.0); glVertex3f(x, -y, 0.0);
 	glTexCoord2f(1.0, 0.0); glVertex3f(x, y, 0.0);
 	glTexCoord2f(0.0, 0.0); glVertex3f(-x, y, 0.0);
+
+	/*glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 0.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, -1.0f, 0.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, 0.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 0.0f);*/
+
 	glEnd();
 }
 
@@ -101,15 +127,18 @@ void drawBitmapText(char *str, float x, float y, float z)
 //큐브의 한 면, 화면 안쪽 방향인 -Z축방향으로 0.5이동하여 정사각형을 그린다.
 static void cubebase(void)
 {
-	glBegin(GL_QUADS);
+	glBegin(GL_TRIANGLES);
 	/*glVertex3d(-0.5, -0.5, -0.5);
 	glVertex3d(-0.5, 0.5, -0.5);
 	glVertex3d(0.5, 0.5, -0.5);
 	glVertex3d(0.5, -0.5, -0.5);*/
+	
 	glVertex3d(point1[0], point1[1], point1[2]);
 	glVertex3d(point2[0], point2[1], point2[2]);
 	glVertex3d(point3[0], point3[1], point3[2]);
 	glVertex3d(point4[0], point4[1], point4[2]);
+	
+
 	glEnd();
 }
 
@@ -117,9 +146,10 @@ static void cubebase(void)
 //큐브를 완성시킨다.
 void draw_cube()
 {
-	glPushMatrix();
+	/*glPushMatrix();
 
 	glColor3f(0.0f, 1.0f, 0.0f);     // Green, -Z축 방향
+	
 	cubebase();
 
 	glPushMatrix();
@@ -163,7 +193,75 @@ void draw_cube()
 
 	glEnd();
 
-	glPopMatrix();
+	glPopMatrix();*/
+	glBegin(GL_QUADS);
+	glColor3f(0.0f, 1.0f, 0.0f);     // Green, -Z축 방향
+
+	glVertex3d(ver[0][0], ver[0][1], ver[0][2]);
+	glVertex3d(ver[1][0], ver[1][1], ver[1][2]);
+	glVertex3d(ver[2][0], ver[2][1], ver[2][2]);
+	glVertex3d(ver[3][0], ver[3][1], ver[3][2]);
+
+	glEnd();
+
+
+	glBegin(GL_QUADS);
+	glColor3f(0.0f, 0.0f, 1.0f);     // Blue, +X축 방향
+
+	glVertex3d(ver[2][0], ver[2][1], ver[2][2]);
+	glVertex3d(ver[3][0], ver[3][1], ver[3][2]);
+	glVertex3d(ver[7][0], ver[7][1], ver[7][2]);
+	glVertex3d(ver[6][0], ver[6][1], ver[6][2]);
+
+
+	glEnd();
+
+
+	glBegin(GL_QUADS);
+	glColor3f(1.0f, 0.5f, 0.0f);     // Orange, -X축 방향
+
+	glVertex3d(ver[0][0], ver[0][1], ver[0][2]);
+	glVertex3d(ver[1][0], ver[1][1], ver[1][2]);
+	glVertex3d(ver[5][0], ver[5][1], ver[5][2]);
+	glVertex3d(ver[4][0], ver[4][1], ver[4][2]);
+
+	glEnd();
+
+
+
+	glBegin(GL_QUADS);
+	glColor3f(1.0f, 0.0f, 0.0f);     // Red, +Y축 방향
+
+	glVertex3d(ver[1][0], ver[1][1], ver[1][2]);
+	glVertex3d(ver[2][0], ver[2][1], ver[2][2]);
+	glVertex3d(ver[6][0], ver[6][1], ver[6][2]);
+	glVertex3d(ver[5][0], ver[5][1], ver[5][2]);
+
+	glEnd();
+
+
+	
+	glBegin(GL_QUADS);
+	glColor3f(1.0f, 1.0f, 0.0f);     // Yellow, -Y축 방향
+
+	glVertex3d(ver[0][0], ver[0][1], ver[0][2]);
+	glVertex3d(ver[3][0], ver[3][1], ver[3][2]);
+	glVertex3d(ver[7][0], ver[7][1], ver[7][2]);
+	glVertex3d(ver[4][0], ver[4][1], ver[4][2]);
+
+	glEnd();
+
+
+	glBegin(GL_QUADS);
+	glColor3f(1.0f, 0.0f, 1.0f);     // Magenta, +Z축 방향
+
+	glVertex3d(ver[4][0], ver[4][1], ver[4][2]);
+	glVertex3d(ver[5][0], ver[5][1], ver[5][2]);
+	glVertex3d(ver[6][0], ver[6][1], ver[6][2]);
+	glVertex3d(ver[7][0], ver[7][1], ver[7][2]);
+
+	glEnd();
+
 
 	glFlush();
 }
@@ -205,11 +303,21 @@ void draw_line()
 	glFlush();
 }
 
+void mdraw_line(CvPoint point)
+{
+	glBegin(GL_LINES);
+
+	glColor3f(1.0, 0.0, 0.0);
+	glVertex3f(1.0, 1.0, 0.0);
+	glVertex3f(1.0, 0.0, 0.0);
+	glEnd();
+
+}
 // 카메라 초기화
 void cameraInit()
 {
 
-	capture = new VideoCapture(0);
+	/*capture = new VideoCapture(0);
 
 	if (!capture) {
 		printf("Could not capture a camera\n\7");
@@ -223,8 +331,21 @@ void cameraInit()
 	screenW = img_frame.cols;
 	screenH = img_frame.rows;
 
+	cout << screenW << " " << screenH << endl;*/
+
+	Mat img_frame;
+
+	Camera.initialize();
+	Hand.initialize();
+
+	Camera.getColorImage(&img_frame);
+	screenW = img_frame.cols;
+	screenH = img_frame.rows;
+
 	cout << screenW << " " << screenH << endl;
+
 }
+
 
 
 void display()
@@ -253,11 +374,17 @@ void display()
 	//glTranslatef(0.0, 0.0, -4.0);
 	//glRotatef(cubeAngle, 1.0, 1.0, 1.0);
 	//glTranslatef(cubeX, cubeY, cubeZ);
-	glTranslated(cubeX, cubeY, cubeZ);
+	glTranslatef(cubeX, cubeY, cubeZ-1);
 	glRotatef(pitch, 1.0, 0.0, 0.0); //x축에 대해 회전
 	glRotatef(yaw, 0.0, 1.0, 0.0); //y축에 대해 회전
 	glRotatef(roll, 0.0, 0.0, 1.0); //z축에 대해 회전
 
+	glBegin(GL_LINES);
+
+	glColor3f(1.0, 0.0, 0.0);
+	glVertex3f(2.2, 1.65, 0.0);
+	glVertex3f(2.2, -1.65, 0.0);
+	glEnd();
 
 
 	draw_cube(); //큐브
@@ -285,28 +412,39 @@ void reshape(GLsizei width, GLsizei height)
 
 void funcHand(int finger_num, CvPoint Click_Point)
 {
-	double gap = 0;
-
+	double gapX = 0;
+	double gapY = 0;
 	if (curHandPoint.x == 0 && curHandPoint.y == 0)
 		curHandPoint = Click_Point;
+	
+	gapX = curHandPoint.x - Click_Point.x;
+	gapY = curHandPoint.y - Click_Point.y;
 
 	//5 Fingers
-	if (finger_num == 4) {
-		gap = curHandPoint.x - Click_Point.x;
-		yaw -= gap;
-		cout << gap << endl;
+	if (finger_num == 4)
+	{
+		/*cubeX += gapX *(9 / 1280);	//640:4.5
+		cubeY += gapY *(11 / 1600); //480:3.3
+		cout << "X : " << cubeX << endl;
+		cout << "Y : " << cubeY << endl;
+		cout << "GAPX : " << gapX << endl;
+		cout << "GAPY : " << gapY << endl;*/
+		yaw -= gapX;
 		if (yaw > 360)
 			yaw -= 360;
-		
-		gap = curHandPoint.y - Click_Point.y;
-		pitch -= gap;
+
+		pitch -= gapY;
 		if (pitch > 360)
 			pitch -= 360;
 	}
+	/*else {
+		curHandPoint = CvPoint(0, 0);
+	}*/
+	//4 Fingers
 	if (finger_num == 3) {
 
-		//cubeX += (curHandPoint.x - Click_Point.x) / 50;
-		//cubeY += (curHandPoint.y - Click_Point.y) / 50;
+		cubeX += gapX *(1/100);	//640:4.5
+		cubeY += gapY *(1/100); //480:3.3
 	}
 	else if (finger_num == 2) {
 		//roll -= 10;
@@ -314,10 +452,6 @@ void funcHand(int finger_num, CvPoint Click_Point)
 			roll -= 360;
 
 	}
-	else if (finger_num == 0)
-		curHandPoint = CvPoint(0, 0);
-
-	curHandPoint = Click_Point;
 
 }
 
@@ -354,9 +488,13 @@ void timer(int value) {
 	//--------------따로 함수 뺄거임 ---------------//
 	//cout << Hand.getLHFingerNum() << endl;
 	funcHand(LH_finger_num, LH_Click_Point);
-	
-	//----------------------------------------------------//
-	
+	if (LH_finger_num != 0)
+		curHandPoint = LH_Click_Point;
+	else {
+		curHandPoint.x = 0;
+		curHandPoint.y = 0;
+	}
+
 	glutPostRedisplay();      //윈도우를 다시 그리도록 요청
 	glutTimerFunc(100, timer, 0); //다음 타이머 이벤트는 1밀리세컨트 후  호출됨.
 }
@@ -412,17 +550,12 @@ int main(int argc, char** argv)
 
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH); //더블 버퍼와 깊이 버퍼를 사용하도록 설정, GLUT_RGB=0x00임
 
-	//cameraInit();
+	cameraInit();
 	//-----//
 
 
-	screenW = ColorSize.width;
-	screenH = ColorSize.height;
 
-	Camera.initialize();
-	Hand.initialize();
-
-	glutInitWindowSize(screenW+110, screenH);
+	glutInitWindowSize(screenW, screenH);
 	glutInitWindowPosition(100, 100); //윈도우의 위치 (x,y)
 	glutCreateWindow("OpenGL Example"); //윈도우 생성
 

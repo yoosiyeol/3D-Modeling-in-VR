@@ -337,23 +337,29 @@ void mHand::CheckFingerNum(const cv::Mat Input, cv::Mat *OutSumImage,int num_fin
 
 //손가락 개수 리턴
 int mHand::getRHFingerNum() {
-	
-	return RHnum_fingers;
+	int RH_fing = RHnum_fingers;
+	RHnum_fingers = 0;
+	return RH_fing;
 }
 
 int mHand::getLHFingerNum() {
-	return LHnum_fingers;
+	int LH_fing = LHnum_fingers;
+	LHnum_fingers = 0;
+	return LH_fing;
 }
 
 cv::Point mHand::getLHFingerClickPoint()
 {
-
-	return LHClickPoint;
+	CvPoint click = LHClickPoint;
+	LHClickPoint = CvPoint(0, 0);
+	return click;
 }
 
 cv::Point mHand::getRHFingerClickPoint()
 {
-	return RHClickPoint;
+	CvPoint click = RHClickPoint;
+	RHClickPoint = CvPoint(0, 0);
+	return click;
 }
 
 cv::Point mHand::getLHandCenter()
