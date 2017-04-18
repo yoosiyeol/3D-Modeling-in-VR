@@ -1,0 +1,28 @@
+﻿  main.cpp
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(324): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(325): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(334): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(335): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(344): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(345): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(472): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(504): warning C4244: '-=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(619): warning C4244: '인수': 'GLdouble'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(733): warning C4244: '=': 'GLdouble'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(734): warning C4244: '=': 'GLdouble'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(849): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(850): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(859): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(860): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(867): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(869): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(877): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(878): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(885): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(886): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(894): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(896): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(375): warning C4715: 'IsCollison': 모든 제어 경로에서 값을 반환하지는 않습니다.
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(452): warning C4715: 'SetCollisionVertex': 모든 제어 경로에서 값을 반환하지는 않습니다.
+  Test_Rendering.vcxproj -> D:\visual studio poject\Test_Rendering\x64\Debug\Test_Rendering.exe
+  Test_Rendering.vcxproj -> D:\visual studio poject\Test_Rendering\x64\Debug\Test_Rendering.pdb (Partial PDB)
