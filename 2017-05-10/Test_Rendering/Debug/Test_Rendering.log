@@ -1,0 +1,5 @@
+﻿  Polygon.cpp
+d:\visual studio poject\test_rendering\test_rendering\polygon.cpp(1): fatal error C1083: 포함 파일을 열 수 없습니다. 'Polygon.h': No such file or directory
+  main.cpp
+d:\visual studio poject\test_rendering\test_rendering\main.cpp(3): fatal error C1083: 포함 파일을 열 수 없습니다. 'glut\glut.h': No such file or directory
+  코드를 생성하고 있습니다...
